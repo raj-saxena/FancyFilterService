@@ -1,10 +1,6 @@
 ---
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/fancyFilterDB
+    url: "jdbc:postgresql://localhost:5432/fancyFilterDB"
     password: "the-best-db-password-ever!"
     username: "neptunium"
-    initialization-mode: always
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
