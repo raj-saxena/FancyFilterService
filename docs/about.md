@@ -41,3 +41,31 @@ Example data =>
     * Postgres - relational database.
 * Frontend
     * React
+
+___
+#### DB Schema
+
+* `app_user`
+
+| Column | type|
+|--------|-----|
+| id | uuid |
+| display_name | text |
+| age | smallint |
+| job_title | text |
+| height_in_cm | smallint |
+| city | uuid |
+| main_photo | text |
+| compatibility_score | decimal(4, 3) |
+| contacts_exchanged | smallint |
+| favorite | boolean |
+| religion | text |
+
+
+* `city`
+
+| Column | type|
+|--------|-----|
+| id | uuid |
+| name | text |
+| coordinates | point |
