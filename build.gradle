@@ -3,9 +3,12 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.2.71'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.2.71'
     id "org.flywaydb.flyway" version "5.2.4"
+    id 'nu.studer.jooq' version '3.0.3'
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.flywaydb.flyway"
+apply plugin: 'nu.studer.jooq'
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -25,6 +28,7 @@ dependencies {
     runtime 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core:5.2.4'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
 }
 
 compileKotlin {
@@ -41,10 +45,47 @@ compileTestKotlin {
     }
 }
 
+def db_url = "jdbc:postgresql://localhost:5432/fancyFilterDB"
+def db_user = "neptunium"
+def db_password = "the-best-db-password-ever!"
+
 flyway {
-    url = "jdbc:postgresql://localhost:5432/fancyFilterDB"
-    password = "the-best-db-password-ever!"
-    user = "neptunium"
+    url = db_url
+    user = db_user
+    password = db_password
 }
 
-build.dependsOn flywayMigrate
+jooq {
+    fancyFilterApp(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = db_url
+            user = db_user
+            password = db_password
+        }
+        generator {
+            name = 'org.jooq.codegen.DefaultGenerator'
+            strategy {
+                name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.postgres.PostgresDatabase'
+                inputSchema = 'public'
+            }
+            generate {
+                relations = true
+                deprecated = false
+                records = true
+                immutablePojos = false
+                fluentSetters = true
+            }
+            target {
+                packageName = 'jooq.fancyFilterApp'
+                directory = 'src/main/java/generated'
+            }
+        }
+    }
+}
+
+generateFancyFilterAppJooqSchemaSource.dependsOn flywayMigrate
+build.dependsOn generateFancyFilterAppJooqSchemaSource
