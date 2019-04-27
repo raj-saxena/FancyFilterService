@@ -25,10 +25,21 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    // DB
+    jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
     runtime 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core:5.2.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
+    // Test
+    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit' //exclude JUnit 4
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileKotlin {
