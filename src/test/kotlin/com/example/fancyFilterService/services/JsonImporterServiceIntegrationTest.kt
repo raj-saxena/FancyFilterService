@@ -1,7 +1,6 @@
 package com.example.fancyFilterService.services
 
-import com.example.fancyFilterService.dtos.City
-import com.example.fancyFilterService.dtos.User
+import com.example.fancyFilterService.builders.UserBuilder
 import com.example.fancyFilterService.dtos.Users
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -13,14 +12,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-class UserImporterServiceIntegrationTest {
+class JsonImporterServiceIntegrationTest {
 
     @Autowired
     private lateinit var mapper: ObjectMapper
 
     @Test
     fun `should return empty for non-existent file`() {
-        val userImporterService = UserImporterService("/non-existent-file.json", mapper)
+        val userImporterService = JsonImporterService("/non-existent-file.json", mapper)
 
         val users = userImporterService.loadUsers()
 
@@ -29,14 +28,9 @@ class UserImporterServiceIntegrationTest {
 
     @Test
     fun `should read from json file and return list of User`() {
-        val expectedUser = User(
-            "Caroline", 41, "Corporate Lawyer", 153,
-            City("Leeds", 53.801277F, -1.548567F),
-            "http://thecatapi.com/api/images/get?format=src&type=gif",
-            0.76F, 2, true, "Atheist"
-        )
+        val expectedUser = UserBuilder().build()
 
-        val userImporterService = UserImporterService("/test-users.json", mapper)
+        val userImporterService = JsonImporterService("/test-users.json", mapper)
 
         val users: Users = userImporterService.loadUsers()
 

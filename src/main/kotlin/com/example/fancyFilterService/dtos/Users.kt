@@ -10,7 +10,7 @@ data class User(
     @JsonProperty("job_title") val jobTitle: String,
     @JsonProperty("height_in_cm") val heightInCm: Int,
     val city: City,
-    @JsonProperty("main_photo") val mainPhoto: String,
+    @JsonProperty("main_photo") val mainPhoto: String?,
     @JsonProperty("compatibility_score") val compatibilityScore: Float,
     @JsonProperty("contacts_exchanged") val contactsExchanged: Int,
     val favourite: Boolean,

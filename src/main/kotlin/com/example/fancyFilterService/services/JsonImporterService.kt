@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class UserImporterService(
+class JsonImporterService(
     @Value("\${user.filename}") private val filepath: String,
     private val mapper: ObjectMapper
 ) {
