@@ -19,6 +19,6 @@ data class User(
 
 data class City(
     val name: String,
-    @JsonProperty("lat") val latitude: Float,
-    @JsonProperty("lon") val longitude: Float
+    @JsonProperty("lat") val latitude: Double,
+    @JsonProperty("lon") val longitude: Double
 )

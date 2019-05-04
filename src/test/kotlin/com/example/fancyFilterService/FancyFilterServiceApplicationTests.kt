@@ -22,5 +22,4 @@ class FancyFilterServiceApplicationTests {
 
         assertThat(response).contains("UP")
     }
-
 }

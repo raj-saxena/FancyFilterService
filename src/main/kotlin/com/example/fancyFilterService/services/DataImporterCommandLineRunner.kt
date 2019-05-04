@@ -12,7 +12,7 @@ class DataImporterCommandLineRunner(
     override fun run(vararg args: String?) {
         if (userRepository.getUserCount() == 0) {
             val users = jsonImporterService.loadUsers()
-            userRepository.save(users)
+            userRepository.save(users.users)
         }
     }
 }

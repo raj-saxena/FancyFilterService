@@ -2,8 +2,8 @@ drop table if exists city CASCADE;
 
 create table city (
     id                  uuid not null,
-    city_name           text,
-    coordinates         point,
+    city_name           text not null,
+    coordinates         point not null,
     primary key(id)
 );
 
@@ -15,7 +15,7 @@ create table app_user (
     age                 smallint,
     job_title           text,
     height_in_cm        smallint,
-    city                uuid references city(id),
+    city_id             uuid references city(id),
     main_photo          text,
     compatibility_score decimal(4, 3),
     contacts_exchanged  smallint,

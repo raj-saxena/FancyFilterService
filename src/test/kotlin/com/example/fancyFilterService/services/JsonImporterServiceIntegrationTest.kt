@@ -1,6 +1,6 @@
 package com.example.fancyFilterService.services
 
-import com.example.fancyFilterService.builders.UserBuilder
+import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.Users
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +28,7 @@ class JsonImporterServiceIntegrationTest {
 
     @Test
     fun `should read from json file and return list of User`() {
-        val expectedUser = UserBuilder().build()
+        val expectedUser = UserTestBuilder().build()
 
         val userImporterService = JsonImporterService("/test-users.json", mapper)
 

@@ -1,6 +1,6 @@
 package com.example.fancyFilterService.services
 
-import com.example.fancyFilterService.builders.UserBuilder
+import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.Users
 import com.example.fancyFilterService.repositories.UserRepository
 import com.nhaarman.mockitokotlin2.mock
@@ -24,14 +24,14 @@ class DataImporterCommandLineRunnerTest {
     @Test
     fun `should insert users`() {
         whenever(userRepository.getUserCount()).thenReturn(0)
-        val importedUsers = Users(listOf(UserBuilder().build()))
+        val importedUsers = Users(listOf(UserTestBuilder().build()))
         whenever(jsonImporterService.loadUsers()).thenReturn(importedUsers)
 
         dataImporterCommandLineRunner.run()
 
         verify(userRepository).getUserCount()
         verify(jsonImporterService).loadUsers()
-        verify(userRepository).save(importedUsers)
+        verify(userRepository).save(importedUsers.users)
     }
 
     @Test
