@@ -2,7 +2,6 @@ package com.example.fancyFilterService.services
 
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.Users
-import com.example.fancyFilterService.repositories.UserRepository
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
@@ -12,35 +11,35 @@ import org.junit.jupiter.api.Test
 
 class DataImporterCommandLineRunnerTest {
     private val jsonImporterService = mock<JsonImporterService>()
-    private val userRepository = mock<UserRepository>()
+    private val userService = mock<UserService>()
 
     private lateinit var dataImporterCommandLineRunner: DataImporterCommandLineRunner
 
     @BeforeEach
     fun setUp() {
-        dataImporterCommandLineRunner = DataImporterCommandLineRunner(userRepository, jsonImporterService)
+        dataImporterCommandLineRunner = DataImporterCommandLineRunner(userService, jsonImporterService)
     }
 
     @Test
     fun `should insert users`() {
-        whenever(userRepository.getUserCount()).thenReturn(0)
+        whenever(userService.getUserCount()).thenReturn(0)
         val importedUsers = Users(listOf(UserTestBuilder().build()))
         whenever(jsonImporterService.loadUsers()).thenReturn(importedUsers)
 
         dataImporterCommandLineRunner.run()
 
-        verify(userRepository).getUserCount()
+        verify(userService).getUserCount()
         verify(jsonImporterService).loadUsers()
-        verify(userRepository).save(importedUsers.users)
+        verify(userService).save(importedUsers.users)
     }
 
     @Test
     fun `should skip data insert if users present`() {
-        whenever(userRepository.getUserCount()).thenReturn(1)
+        whenever(userService.getUserCount()).thenReturn(1)
 
         dataImporterCommandLineRunner.run()
 
-        verify(userRepository).getUserCount()
+        verify(userService).getUserCount()
         verifyNoMoreInteractions(jsonImporterService)
     }
 
