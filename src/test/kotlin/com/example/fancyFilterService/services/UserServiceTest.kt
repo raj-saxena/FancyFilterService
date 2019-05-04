@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Random
 
 class UserServiceTest {
     private lateinit var userService: UserService
@@ -28,5 +29,25 @@ class UserServiceTest {
 
         verify(userRepository).getUsers()
         assertThat(actualUsers).isEqualTo(Users(expected))
+    }
+
+    @Test
+    fun `should return userCount`() {
+        val expectedUserCount = Random().nextInt()
+        given(userRepository.getUserCount()).willReturn(expectedUserCount)
+
+        val actualUserCount = userService.getUserCount()
+
+        verify(userRepository).getUserCount()
+        assertThat(actualUserCount).isEqualTo(expectedUserCount)
+    }
+
+    @Test
+    fun `should save users in repository`() {
+        val users = listOf(UserTestBuilder().build())
+
+        userService.save(users)
+
+        verify(userRepository).save(users)
     }
 }
