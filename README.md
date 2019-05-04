@@ -3,7 +3,6 @@
 ### Content
 * [About](docs/about.md)
 
-
 ### Running
 * Start DB with 
 ```bash
@@ -18,4 +17,9 @@ docker-compose -f src/main/resources/docker-compose.yml up
 * JooqCodeGeneration - Runs as part of `build` after flywayMigration. It can be manually run by 
 ```bash
 ./gradlew generateFancyFilterAppJooqSchemaSource
+```
+
+* Running the project - You need to have Jdk installed and `$JAVA_HOME` defined to be able to run the project.
+```bash
+./gradlew bootRun
 ```
