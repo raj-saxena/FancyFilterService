@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  postgres:
+    image: "mdillon/postgis:10"
+    environment:
+      POSTGRES_DB: 'fancyFilterDB'
+      POSTGRES_USER: 'neptunium'
+      POSTGRES_PASSWORD: 'the-best-db-password-ever!'
+      PGDATA: 'tmp/pgdata'
+    ports:
+      - "5432:5432"

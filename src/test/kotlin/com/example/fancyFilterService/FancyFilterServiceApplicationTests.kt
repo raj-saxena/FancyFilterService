@@ -1,16 +1,25 @@
 package com.example.fancyFilterService
 
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.getForObject
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@RunWith(SpringRunner::class)
-@SpringBootTest
+
+@ExtendWith(SpringExtension::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FancyFilterServiceApplicationTests {
+    @Autowired
+    lateinit var restTemplate: TestRestTemplate
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun `should return UP for health endpoint`() {
+        val response = restTemplate.getForObject<String>("/actuator/health")
 
+        assertThat(response).contains("UP")
+    }
 }

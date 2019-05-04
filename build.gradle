@@ -1,39 +1,126 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.4.RELEASE'
-	id 'org.jetbrains.kotlin.jvm' version '1.2.71'
-	id 'org.jetbrains.kotlin.plugin.spring' version '1.2.71'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.71'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.2.71'
+    id "org.flywaydb.flyway" version "5.2.4"
+    id 'nu.studer.jooq' version '3.0.3'
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.flywaydb.flyway"
+apply plugin: 'nu.studer.jooq'
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-jooq'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'org.jetbrains.kotlin:kotlin-reflect'
-	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-	runtimeOnly 'org.postgresql:postgresql'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    // DB
+    jooqRuntime 'org.postgresql:postgresql:42.2.5'
+    implementation 'org.jooq:jooq-codegen'
+    runtime 'org.postgresql:postgresql:42.2.5'
+    implementation 'net.postgis:postgis-jdbc:2.3.0'
+    implementation 'org.flywaydb:flyway-core:5.2.4'
+    // Test
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit' //exclude JUnit 4
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ['-Xjsr305=strict']
-		jvmTarget = '1.8'
-	}
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '1.8'
+    }
 }
 
 compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ['-Xjsr305=strict']
-		jvmTarget = '1.8'
-	}
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '1.8'
+    }
 }
+
+def db_url = "jdbc:postgresql://localhost:5432/fancyFilterDB"
+def db_user = "neptunium"
+def db_password = "the-best-db-password-ever!"
+
+flyway {
+    url = db_url
+    user = db_user
+    password = db_password
+}
+
+jooq {
+    fancyFilterApp(sourceSets.main) {
+        logging = 'WARN'
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = db_url
+            user = db_user
+            password = db_password
+        }
+        generator {
+            name = 'org.jooq.codegen.DefaultGenerator'
+            strategy {
+                name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.postgres.PostgresDatabase'
+                inputSchema = 'public'
+                forcedTypes {
+                    forcedType {
+                        userType = 'org.postgresql.geometric.PGpoint'
+                        converter = 'com.example.fancyFilterService.configs.PostgresPointJooqConverter'
+                        expression = '.*\\.coordinates.*'
+                        types = '.*'
+                    }
+                }
+                excludes = '.*ST_ValueCount' +
+                        '|.*St_Valuepercent' +
+                        '|.*St_Histogram' +
+                        '|.*St_Quantile' +
+                        '|.*St_Approxhistogram' +
+                        '|.*St_PixelOfValue' +
+                        '|.*St_Approxquantile' +
+                        '|.*ST_Tile'
+            }
+            generate {
+                routines = false
+                relations = true
+                deprecated = false
+                records = true
+                immutablePojos = false
+                fluentSetters = true
+            }
+            target {
+                packageName = 'jooq.fancy.filter.app'
+                directory = 'src/main/java/generated'
+            }
+        }
+    }
+}
+// Delete jooq generated code
+clean.doFirst {
+    printf "${rootDir}/src/main/java/generated/"
+    delete "${rootDir}/src/main/java/generated/"
+}
+
+generateFancyFilterAppJooqSchemaSource.dependsOn flywayMigrate
