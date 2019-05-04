@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class FancyFilterServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<FancyFilterServiceApplication>(*args)
+    runApplication<FancyFilterServiceApplication>(*args)
 }

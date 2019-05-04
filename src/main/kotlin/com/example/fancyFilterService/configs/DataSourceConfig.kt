@@ -35,5 +35,4 @@ class DataSourceConfig {
 
     @Bean
     fun dslContext(dataSource: DataSource): DefaultDSLContext = DefaultDSLContext(dataSource, SQLDialect.POSTGRES)
-
 }

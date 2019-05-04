@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
-
 @Service
 class JsonImporterService(
     @Value("\${user.filename}") private val filepath: String,
