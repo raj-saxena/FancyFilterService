@@ -14,7 +14,7 @@ import java.util.UUID
 @Repository
 class UserRepository(val jooq: DSLContext) {
 
-    fun getUserCount() = 0
+    fun getUserCount() = jooq.fetchCount(APP_USER)
 
     fun save(users: List<User>) {
         users.forEach {
