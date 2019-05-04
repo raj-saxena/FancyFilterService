@@ -33,12 +33,15 @@ class UserRepositoryIntegrationTest {
 
     @Test
     fun `should save users`() {
-        val users = listOf(UserTestBuilder().build())
+        val expectedUser = UserTestBuilder().build()
+        val users = listOf(expectedUser)
 
         userRepository.save(users)
 
         val savedUsers = userRepository.getUsers()
-        assertThat(savedUsers).isEqualTo(users)
+        assertThat(savedUsers).hasSize(1)
+        assertThat(savedUsers[0]).isEqualToIgnoringGivenFields(expectedUser, "id", "city")
+        assertThat(savedUsers[0].city).isEqualToIgnoringGivenFields(expectedUser.city, "id")
     }
 
     @Test

@@ -32,8 +32,11 @@ class JsonImporterServiceIntegrationTest {
 
         val userImporterService = JsonImporterService("/test-users.json", mapper)
 
-        val users: Users = userImporterService.loadUsers()
+        val users = userImporterService.loadUsers()
 
-        assertThat(users).isEqualTo(Users(listOf(expectedUser)))
+        val userList = users.users
+        assertThat(userList).hasSize(1)
+        assertThat(userList[0]).isEqualToIgnoringGivenFields(expectedUser, "id", "city")
+        assertThat(userList[0].city).isEqualToIgnoringGivenFields(expectedUser.city, "id")
     }
 }
