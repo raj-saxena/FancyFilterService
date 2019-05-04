@@ -37,28 +37,18 @@ class UserRepositoryIntegrationTest {
 
         userRepository.save(users)
 
-
-        val savedUsers = jooq.selectFrom(
-            APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
-        ).map {
-            User(
-                it.get(APP_USER.DISPLAY_NAME),
-                it.get(APP_USER.AGE).toInt(),
-                it.get(APP_USER.JOB_TITLE),
-                it.get(APP_USER.HEIGHT_IN_CM).toInt(),
-                CityDto(
-                    it.get(CITY.CITY_NAME), it.get(CITY.COORDINATES).latitude(), it.get(CITY.COORDINATES).longitude()
-                ),
-                it.get(APP_USER.MAIN_PHOTO),
-                it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
-                it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-                it.get(APP_USER.FAVORITE),
-                it.get(APP_USER.RELIGION)
-            )
-        }
-
+        val savedUsers = userRepository.getUsers()
         assertThat(savedUsers).isEqualTo(users)
     }
 
+    @Test
+    fun `should return userCount`() {
+        val userCountInitial = userRepository.getUserCount()
+        val users = listOf(UserTestBuilder().build())
 
+        userRepository.save(users)
+        val userCountAfterSave = userRepository.getUserCount()
+
+        assertThat(userCountAfterSave).isEqualTo(userCountInitial + 1)
+    }
 }
