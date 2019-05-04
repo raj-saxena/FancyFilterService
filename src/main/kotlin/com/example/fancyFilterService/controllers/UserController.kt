@@ -9,5 +9,4 @@ class UserController(val userService: UserService) {
 
     @GetMapping("/api/users")
     fun getUsers() = userService.getUsers()
-
 }

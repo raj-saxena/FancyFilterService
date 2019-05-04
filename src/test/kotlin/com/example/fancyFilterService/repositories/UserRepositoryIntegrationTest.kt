@@ -1,9 +1,6 @@
 package com.example.fancyFilterService.repositories
 
 import com.example.fancyFilterService.builders.UserTestBuilder
-import com.example.fancyFilterService.dtos.User
-import com.example.fancyFilterService.latitude
-import com.example.fancyFilterService.longitude
 import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import com.example.fancyFilterService.dtos.City as CityDto
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest

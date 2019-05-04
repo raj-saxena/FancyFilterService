@@ -9,6 +9,7 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 apply plugin: "org.flywaydb.flyway"
 apply plugin: 'nu.studer.jooq'
+apply plugin: 'java'
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -16,9 +17,15 @@ sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    jcenter()
+}
+configurations {
+    ktlint
 }
 
 dependencies {
+    // KtLint
+    ktlint "com.pinterest:ktlint:0.32.0"
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -124,3 +131,19 @@ clean.doFirst {
 }
 
 generateFancyFilterAppJooqSchemaSource.dependsOn flywayMigrate
+
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt"
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "-F", "src/**/*.kt"
+}
