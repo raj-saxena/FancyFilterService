@@ -1,6 +1,5 @@
 package com.example.fancyFilterService.repositories
 
-import com.example.fancyFilterService.UsersAssert
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.FilterUserRequest
@@ -9,6 +8,7 @@ import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -27,6 +27,15 @@ class UserRepositoryIntegrationTest {
 
     @BeforeEach
     fun setUp() {
+        clearDB()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        clearDB()
+    }
+
+    private fun clearDB() {
         jooq.deleteFrom(APP_USER).execute()
         jooq.deleteFrom(CITY).execute()
     }
@@ -61,6 +70,17 @@ class UserRepositoryIntegrationTest {
         userRepository.save(listOf(userWithPhoto, userWithoutPhoto))
 
         val usersWithPhoto = userRepository.getUsersFilterBy(FilterUserRequest(hasPhoto = true))
+
+        assertThat(Users(usersWithPhoto)).isEqualTo(Users(usersWithPhoto))
+    }
+
+    @Test
+    fun `should return users having contacts more than 0`() {
+        val userWithNoContacts = UserTestBuilder(seed = 1, contactsExchanged = 0).build()
+        val userWithContacts = UserTestBuilder(seed = 2, contactsExchanged = 3).build()
+        userRepository.save(listOf(userWithNoContacts, userWithContacts))
+
+        val usersWithPhoto = userRepository.getUsersFilterBy(FilterUserRequest(inContact = true))
 
         assertThat(Users(usersWithPhoto)).isEqualTo(Users(usersWithPhoto))
     }

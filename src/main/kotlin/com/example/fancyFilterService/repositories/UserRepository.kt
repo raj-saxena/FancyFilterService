@@ -9,6 +9,7 @@ import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.jooq.impl.DSL
 import org.postgresql.geometric.PGpoint
 import org.springframework.stereotype.Repository
@@ -45,58 +46,47 @@ class UserRepository(val jooq: DSLContext) {
 
     fun getUsers(): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
-    ).map {
-        User(
-            it.get(APP_USER.ID),
-            it.get(APP_USER.DISPLAY_NAME),
-            it.get(APP_USER.AGE).toInt(),
-            it.get(APP_USER.JOB_TITLE),
-            it.get(APP_USER.HEIGHT_IN_CM).toInt(),
-            City(
-                it.get(CITY.ID),
-                it.get(CITY.CITY_NAME),
-                it.get(CITY.COORDINATES).latitude(),
-                it.get(CITY.COORDINATES).longitude()
-            ),
-            it.get(APP_USER.MAIN_PHOTO),
-            it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
-            it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-            it.get(APP_USER.FAVORITE),
-            it.get(APP_USER.RELIGION)
-        )
-    }
+    ).map { toUser(it) }
 
     fun getUsersFilterBy(filterUserRequest: FilterUserRequest): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
     ).where(addFilterCondition(filterUserRequest))
-        .map {
-            User(
-                it.get(APP_USER.ID),
-                it.get(APP_USER.DISPLAY_NAME),
-                it.get(APP_USER.AGE).toInt(),
-                it.get(APP_USER.JOB_TITLE),
-                it.get(APP_USER.HEIGHT_IN_CM).toInt(),
-                City(
-                    it.get(CITY.ID),
-                    it.get(CITY.CITY_NAME),
-                    it.get(CITY.COORDINATES).latitude(),
-                    it.get(CITY.COORDINATES).longitude()
-                ),
-                it.get(APP_USER.MAIN_PHOTO),
-                it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
-                it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-                it.get(APP_USER.FAVORITE),
-                it.get(APP_USER.RELIGION)
-            )
-        }
+        .map { toUser(it) }
 
     private fun addFilterCondition(filterUserRequest: FilterUserRequest): Condition {
-        return DSL.trueCondition().and(
-            filterUserRequest.hasPhoto?.let {
-                return@let when (it) {
+        return DSL.trueCondition()?.let {
+            it.and(filterUserRequest.hasPhoto?.let { inner ->
+                when (inner) {
                     true -> APP_USER.MAIN_PHOTO.isNotNull
                     false -> APP_USER.MAIN_PHOTO.isNull
                 }
-            })
+            } ?: DSL.trueCondition())
+        }?.let {
+            it.and(filterUserRequest.inContact?.let { inner ->
+                when (inner) {
+                    true -> APP_USER.CONTACTS_EXCHANGED.greaterThan(0)
+                    false -> APP_USER.CONTACTS_EXCHANGED.equal(0)
+                }
+            } ?: DSL.trueCondition())
+        }!!
     }
+
+    private fun toUser(it: Record): User = User(
+        it.get(APP_USER.ID),
+        it.get(APP_USER.DISPLAY_NAME),
+        it.get(APP_USER.AGE).toInt(),
+        it.get(APP_USER.JOB_TITLE),
+        it.get(APP_USER.HEIGHT_IN_CM).toInt(),
+        City(
+            it.get(CITY.ID),
+            it.get(CITY.CITY_NAME),
+            it.get(CITY.COORDINATES).latitude(),
+            it.get(CITY.COORDINATES).longitude()
+        ),
+        it.get(APP_USER.MAIN_PHOTO),
+        it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
+        it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
+        it.get(APP_USER.FAVORITE),
+        it.get(APP_USER.RELIGION)
+    )
 }
