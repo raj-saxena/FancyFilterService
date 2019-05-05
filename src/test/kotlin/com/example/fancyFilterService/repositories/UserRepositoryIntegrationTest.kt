@@ -8,6 +8,7 @@ import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -26,6 +27,15 @@ class UserRepositoryIntegrationTest {
 
     @BeforeEach
     fun setUp() {
+        clearDB()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        clearDB()
+    }
+
+    private fun clearDB() {
         jooq.deleteFrom(APP_USER).execute()
         jooq.deleteFrom(CITY).execute()
     }
