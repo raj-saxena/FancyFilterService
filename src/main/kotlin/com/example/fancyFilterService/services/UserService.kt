@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val userRepository: UserRepository) {
     fun getUsers(): Users = Users(userRepository.getUsers())
+
     fun getUserCount(): Int = userRepository.getUserCount()
+
     fun save(users: List<User>): Unit = userRepository.save(users)
-    fun getUsersFilterBy(filterUserRequest: FilterUserRequest): Users = TODO()
+
+    fun getUsersFilterBy(filterUserRequest: FilterUserRequest): Users =
+        Users(userRepository.getUsersFilterBy(filterUserRequest))
 }

@@ -46,8 +46,7 @@ class UserControllerIntegrationTest {
         val filterUserRequest = FilterUserRequest(false)
         given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
-        val httpEntity = HttpEntity(filterUserRequest)
-        val actual = restTemplate.postForObject<Users>("/api/users/filter", httpEntity)
+        val actual = restTemplate.postForObject<Users>("/api/users/filter", HttpEntity(filterUserRequest))
 
         verify(userService).getUsersFilterBy(filterUserRequest)
         assertThat(actual).isEqualTo(expected)

@@ -1,6 +1,7 @@
 package com.example.fancyFilterService.repositories
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.FilterUserRequest
 import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.assertj.core.api.Assertions.assertThat
@@ -49,5 +50,18 @@ class UserRepositoryIntegrationTest {
         val userCountAfterSave = userRepository.getUserCount()
 
         assertThat(userCountAfterSave).isEqualTo(userCountInitial + 1)
+    }
+
+    @Test
+    fun `should return users filtered by photo`() {
+        val userWithPhoto = UserTestBuilder(seed = 1, mainPhoto = "somePhoto").build()
+        val userWithoutPhoto = UserTestBuilder(seed = 2, mainPhoto = null).build()
+        userRepository.save(listOf(userWithPhoto, userWithoutPhoto))
+
+        val usersWithPhoto = userRepository.getUsersFilterBy(FilterUserRequest(hasPhoto = true))
+
+        assertThat(usersWithPhoto).hasSize(1)
+        assertThat(usersWithPhoto[0]).isEqualToIgnoringGivenFields(userWithPhoto, "id", "city")
+        assertThat(usersWithPhoto[0].city).isEqualToIgnoringGivenFields(userWithPhoto.city, "id")
     }
 }

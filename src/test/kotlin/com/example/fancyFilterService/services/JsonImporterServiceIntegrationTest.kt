@@ -1,6 +1,7 @@
 package com.example.fancyFilterService.services
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.City
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -27,7 +28,22 @@ class JsonImporterServiceIntegrationTest {
 
     @Test
     fun `should read from json file and return list of User`() {
-        val expectedUser = UserTestBuilder().build()
+        val expectedUser = UserTestBuilder(
+            displayName = "Caroline",
+            age = 41,
+            jobTitle = "Corporate Lawyer",
+            heightInCm = 153,
+            city = City(
+                name = "Leeds",
+                latitude = 53.801277,
+                longitude = -1.548567
+            ),
+            mainPhoto = "http://thecatapi.com/api/images/get?format=src&type=gif",
+            compatibilityScore = 0.76F,
+            contactsExchanged = 2,
+            favourite = true,
+            religion = "Atheist"
+        ).build()
 
         val userImporterService = JsonImporterService("/test-users.json", mapper)
 

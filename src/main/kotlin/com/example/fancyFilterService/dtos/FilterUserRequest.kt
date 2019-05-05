@@ -1,5 +1,8 @@
 package com.example.fancyFilterService.dtos
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class FilterUserRequest(
-    val hasPhoto: Boolean
+    @JsonProperty("has_photo")
+    val hasPhoto: Boolean? = null
 )

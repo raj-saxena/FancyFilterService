@@ -6,7 +6,7 @@ import java.util.UUID
 data class Users(val users: List<User>)
 
 data class User(
-    val id: UUID?,
+    val id: UUID? = null,
     @JsonProperty("display_name") val displayName: String,
     val age: Int,
     @JsonProperty("job_title") val jobTitle: String,
@@ -20,7 +20,7 @@ data class User(
 )
 
 data class City(
-    val id: UUID?,
+    val id: UUID? = null,
     val name: String,
     @JsonProperty("lat") val latitude: Double,
     @JsonProperty("lon") val longitude: Double
