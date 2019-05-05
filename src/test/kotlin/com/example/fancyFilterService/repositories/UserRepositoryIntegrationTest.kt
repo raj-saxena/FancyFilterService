@@ -63,4 +63,15 @@ class UserRepositoryIntegrationTest {
 
         assertThat(Users(usersWithPhoto)).isEqualTo(Users(usersWithPhoto))
     }
+
+    @Test
+    fun `should return users having contacts more than 0`() {
+        val userWithNoContacts = UserTestBuilder(seed = 1, contactsExchanged = 0).build()
+        val userWithContacts = UserTestBuilder(seed = 2, contactsExchanged = 3).build()
+        userRepository.save(listOf(userWithNoContacts, userWithContacts))
+
+        val usersWithPhoto = userRepository.getUsersFilterBy(FilterUserRequest(inContact = true))
+
+        assertThat(Users(usersWithPhoto)).isEqualTo(Users(usersWithPhoto))
+    }
 }

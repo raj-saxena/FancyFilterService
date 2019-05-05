@@ -54,13 +54,21 @@ class UserRepository(val jooq: DSLContext) {
         .map { toUser(it) }
 
     private fun addFilterCondition(filterUserRequest: FilterUserRequest): Condition {
-        return DSL.trueCondition().and(
-            filterUserRequest.hasPhoto?.let {
-                return@let when (it) {
+        return DSL.trueCondition()?.let {
+            it.and(filterUserRequest.hasPhoto?.let { inner ->
+                when (inner) {
                     true -> APP_USER.MAIN_PHOTO.isNotNull
                     false -> APP_USER.MAIN_PHOTO.isNull
                 }
-            })
+            } ?: DSL.trueCondition())
+        }?.let {
+            it.and(filterUserRequest.inContact?.let { inner ->
+                when (inner) {
+                    true -> APP_USER.CONTACTS_EXCHANGED.greaterThan(0)
+                    false -> APP_USER.CONTACTS_EXCHANGED.equal(0)
+                }
+            } ?: DSL.trueCondition())
+        }!!
     }
 
     private fun toUser(it: Record): User = User(
