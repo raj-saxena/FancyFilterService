@@ -4,7 +4,6 @@ import com.example.fancyFilterService.dtos.Users
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions.assertThat
 
-
 class UsersAssert(actual: Users) : AbstractAssert<UsersAssert, Users>(actual, UsersAssert::class.java) {
     companion object {
         fun assertThat(actual: Users) = UsersAssert(actual)

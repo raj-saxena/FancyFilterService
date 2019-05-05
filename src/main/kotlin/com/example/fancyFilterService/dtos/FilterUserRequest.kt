@@ -7,5 +7,5 @@ data class FilterUserRequest(
     val hasPhoto: Boolean? = null,
 
     @JsonProperty("in_contact")
-    val inContact:Boolean? = null
+    val inContact: Boolean? = null
 )
