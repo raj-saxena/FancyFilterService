@@ -1,6 +1,7 @@
 package com.example.fancyFilterService.services
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
 import com.example.fancyFilterService.repositories.UserRepository
 import com.nhaarman.mockitokotlin2.given
@@ -49,5 +50,17 @@ class UserServiceTest {
         userService.save(users)
 
         verify(userRepository).save(users)
+    }
+
+    @Test
+    fun `should get users filter by request`() {
+        val filterUserRequest = FilterUserRequest(hasPhoto = false)
+        val expected = listOf(UserTestBuilder().build())
+        given(userRepository.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+
+        val actual = userService.getUsersFilterBy(filterUserRequest)
+
+        verify(userRepository).getUsersFilterBy(filterUserRequest)
+        assertThat(actual).isEqualTo(Users(expected))
     }
 }
