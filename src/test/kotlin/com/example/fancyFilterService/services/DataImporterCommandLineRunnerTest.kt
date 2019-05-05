@@ -17,7 +17,7 @@ class DataImporterCommandLineRunnerTest {
 
     @BeforeEach
     fun setUp() {
-        dataImporterCommandLineRunner = DataImporterCommandLineRunner(userService, jsonImporterService)
+        dataImporterCommandLineRunner = DataImporterCommandLineRunner(userService, jsonImporterService, true)
     }
 
     @Test

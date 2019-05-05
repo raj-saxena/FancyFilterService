@@ -7,3 +7,6 @@ spring:
 
 user:
   filename: '/users.json'
+
+app:
+  run-data-importer: true

@@ -11,7 +11,7 @@ class UserTestBuilder(
     private val jobTitle: String = "Corporate Lawyer",
     private val heightInCm: Int = 153,
     private val city: City = City(UUID.randomUUID(), "Leeds", 53.801277, -1.548567),
-    private val mainPhoto: String = "http://thecatapi.com/api/images/get?format=src&type=gif",
+    private val mainPhoto: String? = "http://thecatapi.com/api/images/get?format=src&type=gif",
     private val compatibilityScore: Float = 0.76F,
     private val contactsExchanged: Int = 2,
     private val favourite: Boolean = true,

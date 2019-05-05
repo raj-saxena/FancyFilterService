@@ -1,6 +1,7 @@
 package com.example.fancyFilterService.controllers
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
 import com.example.fancyFilterService.services.UserService
 import com.nhaarman.mockitokotlin2.given
@@ -13,10 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.getForObject
+import org.springframework.boot.test.web.client.postForObject
+import org.springframework.http.HttpEntity
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class UserControllerIntegrationTest {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
@@ -32,6 +37,19 @@ class UserControllerIntegrationTest {
         val actual = restTemplate.getForObject<Users>("/api/users")
 
         verify(userService).getUsers()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should filter by given fields`() {
+        val expected = Users(listOf(UserTestBuilder(mainPhoto = null).build()))
+        val filterUserRequest = FilterUserRequest(false)
+        given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+
+        val httpEntity = HttpEntity(filterUserRequest)
+        val actual = restTemplate.postForObject<Users>("/api/users/filter", httpEntity)
+
+        verify(userService).getUsersFilterBy(filterUserRequest)
         assertThat(actual).isEqualTo(expected)
     }
 }
