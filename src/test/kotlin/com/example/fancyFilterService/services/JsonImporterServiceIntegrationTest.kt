@@ -1,7 +1,9 @@
 package com.example.fancyFilterService.services
 
+import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.City
+import com.example.fancyFilterService.dtos.Users
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -49,9 +51,6 @@ class JsonImporterServiceIntegrationTest {
 
         val users = userImporterService.loadUsers()
 
-        val userList = users.users
-        assertThat(userList).hasSize(1)
-        assertThat(userList[0]).isEqualToIgnoringGivenFields(expectedUser, "id", "city")
-        assertThat(userList[0].city).isEqualToIgnoringGivenFields(expectedUser.city, "id")
+        assertThat(users).isEqualTo(Users(listOf(expectedUser)))
     }
 }

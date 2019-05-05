@@ -1,7 +1,10 @@
 package com.example.fancyFilterService.repositories
 
+import com.example.fancyFilterService.UsersAssert
+import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.FilterUserRequest
+import com.example.fancyFilterService.dtos.Users
 import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.assertj.core.api.Assertions.assertThat
@@ -36,9 +39,8 @@ class UserRepositoryIntegrationTest {
         userRepository.save(users)
 
         val savedUsers = userRepository.getUsers()
-        assertThat(savedUsers).hasSize(1)
-        assertThat(savedUsers[0]).isEqualToIgnoringGivenFields(expectedUser, "id", "city")
-        assertThat(savedUsers[0].city).isEqualToIgnoringGivenFields(expectedUser.city, "id")
+
+        assertThat(Users(savedUsers)).isEqualTo(Users(savedUsers))
     }
 
     @Test
@@ -60,8 +62,6 @@ class UserRepositoryIntegrationTest {
 
         val usersWithPhoto = userRepository.getUsersFilterBy(FilterUserRequest(hasPhoto = true))
 
-        assertThat(usersWithPhoto).hasSize(1)
-        assertThat(usersWithPhoto[0]).isEqualToIgnoringGivenFields(userWithPhoto, "id", "city")
-        assertThat(usersWithPhoto[0].city).isEqualToIgnoringGivenFields(userWithPhoto.city, "id")
+        assertThat(Users(usersWithPhoto)).isEqualTo(Users(usersWithPhoto))
     }
 }
