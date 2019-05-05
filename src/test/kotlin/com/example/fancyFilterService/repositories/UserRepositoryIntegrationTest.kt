@@ -1,6 +1,5 @@
 package com.example.fancyFilterService.repositories
 
-import com.example.fancyFilterService.UsersAssert
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.FilterUserRequest

@@ -9,6 +9,7 @@ import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.jooq.impl.DSL
 import org.postgresql.geometric.PGpoint
 import org.springframework.stereotype.Repository
@@ -45,50 +46,12 @@ class UserRepository(val jooq: DSLContext) {
 
     fun getUsers(): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
-    ).map {
-        User(
-            it.get(APP_USER.ID),
-            it.get(APP_USER.DISPLAY_NAME),
-            it.get(APP_USER.AGE).toInt(),
-            it.get(APP_USER.JOB_TITLE),
-            it.get(APP_USER.HEIGHT_IN_CM).toInt(),
-            City(
-                it.get(CITY.ID),
-                it.get(CITY.CITY_NAME),
-                it.get(CITY.COORDINATES).latitude(),
-                it.get(CITY.COORDINATES).longitude()
-            ),
-            it.get(APP_USER.MAIN_PHOTO),
-            it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
-            it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-            it.get(APP_USER.FAVORITE),
-            it.get(APP_USER.RELIGION)
-        )
-    }
+    ).map { toUser(it) }
 
     fun getUsersFilterBy(filterUserRequest: FilterUserRequest): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
     ).where(addFilterCondition(filterUserRequest))
-        .map {
-            User(
-                it.get(APP_USER.ID),
-                it.get(APP_USER.DISPLAY_NAME),
-                it.get(APP_USER.AGE).toInt(),
-                it.get(APP_USER.JOB_TITLE),
-                it.get(APP_USER.HEIGHT_IN_CM).toInt(),
-                City(
-                    it.get(CITY.ID),
-                    it.get(CITY.CITY_NAME),
-                    it.get(CITY.COORDINATES).latitude(),
-                    it.get(CITY.COORDINATES).longitude()
-                ),
-                it.get(APP_USER.MAIN_PHOTO),
-                it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
-                it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-                it.get(APP_USER.FAVORITE),
-                it.get(APP_USER.RELIGION)
-            )
-        }
+        .map { toUser(it) }
 
     private fun addFilterCondition(filterUserRequest: FilterUserRequest): Condition {
         return DSL.trueCondition().and(
@@ -99,4 +62,23 @@ class UserRepository(val jooq: DSLContext) {
                 }
             })
     }
+
+    private fun toUser(it: Record): User = User(
+        it.get(APP_USER.ID),
+        it.get(APP_USER.DISPLAY_NAME),
+        it.get(APP_USER.AGE).toInt(),
+        it.get(APP_USER.JOB_TITLE),
+        it.get(APP_USER.HEIGHT_IN_CM).toInt(),
+        City(
+            it.get(CITY.ID),
+            it.get(CITY.CITY_NAME),
+            it.get(CITY.COORDINATES).latitude(),
+            it.get(CITY.COORDINATES).longitude()
+        ),
+        it.get(APP_USER.MAIN_PHOTO),
+        it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
+        it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
+        it.get(APP_USER.FAVORITE),
+        it.get(APP_USER.RELIGION)
+    )
 }
