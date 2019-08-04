@@ -48,7 +48,7 @@ class UserControllerIntegrationTest {
         @Test
         fun `should filter by hasPhoto`() {
             val expected = Users(listOf(UserTestBuilder(mainPhoto = null).build()))
-            val filterUserRequest = FilterUserRequest(false, favorite = null)
+            val filterUserRequest = FilterUserRequest(false, favourite = null)
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
@@ -60,7 +60,7 @@ class UserControllerIntegrationTest {
         @Test
         fun `should filter by inContact`() {
             val expected = Users(listOf(UserTestBuilder(contactsExchanged = 3).build()))
-            val filterUserRequest = FilterUserRequest(inContact = true, favorite = null)
+            val filterUserRequest = FilterUserRequest(inContact = true, favourite = null)
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
@@ -72,7 +72,7 @@ class UserControllerIntegrationTest {
         @Test
         fun `should filter by favorite`() {
             val expected = Users(listOf(UserTestBuilder(favourite = true).build()))
-            val filterUserRequest = FilterUserRequest(favorite = true)
+            val filterUserRequest = FilterUserRequest(favourite = true)
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))

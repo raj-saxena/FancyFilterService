@@ -37,7 +37,7 @@ class UserRepository(val jooq: DSLContext) {
                 mainPhoto = it.mainPhoto
                 compatibilityScore = it.compatibilityScore.toBigDecimal()
                 contactsExchanged = it.contactsExchanged.toShort()
-                favorite = it.favourite
+                favourite = it.favourite
                 religion = it.religion
             }.insert()
         }
@@ -57,10 +57,10 @@ class UserRepository(val jooq: DSLContext) {
         .and(addInContactCondition(filterUserRequest))
         .and(addFavoriteCondition(filterUserRequest))
 
-    private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.favorite?.let {
+    private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.favourite?.let {
         when (it) {
-            true -> APP_USER.FAVORITE.isTrue
-            false -> APP_USER.FAVORITE.isFalse
+            true -> APP_USER.FAVOURITE.isTrue
+            false -> APP_USER.FAVOURITE.isFalse
         }
     } ?: DSL.trueCondition()
 
@@ -95,7 +95,7 @@ class UserRepository(val jooq: DSLContext) {
         it.get(APP_USER.MAIN_PHOTO),
         it.get(APP_USER.COMPATIBILITY_SCORE).toFloat(),
         it.get(APP_USER.CONTACTS_EXCHANGED).toInt(),
-        it.get(APP_USER.FAVORITE),
+        it.get(APP_USER.FAVOURITE),
         it.get(APP_USER.RELIGION)
     )
 }

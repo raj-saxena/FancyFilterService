@@ -94,10 +94,10 @@ class UserRepositoryIntegrationTest {
             val favoriteUser = UserTestBuilder(seed = 2, favourite = true).build()
             userRepository.save(listOf(notAFavoriteUser, favoriteUser))
 
-            val favoriteUsers = userRepository.getUsersFilterBy(FilterUserRequest(favorite = true))
+            val favoriteUsers = userRepository.getUsersFilterBy(FilterUserRequest(favourite = true))
             assertThat(favoriteUsers).containsOnly(favoriteUser)
 
-            val nonFavoriteUsers = userRepository.getUsersFilterBy(FilterUserRequest(favorite = false))
+            val nonFavoriteUsers = userRepository.getUsersFilterBy(FilterUserRequest(favourite = false))
             assertThat(nonFavoriteUsers).containsOnly(notAFavoriteUser)
         }
     }

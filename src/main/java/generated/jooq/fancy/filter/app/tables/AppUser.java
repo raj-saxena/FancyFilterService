@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AppUser extends TableImpl<AppUserRecord> {
 
-    private static final long serialVersionUID = 1646281224;
+    private static final long serialVersionUID = 1108896857;
 
     /**
      * The reference instance of <code>public.app_user</code>
@@ -103,9 +103,9 @@ public class AppUser extends TableImpl<AppUserRecord> {
     public final TableField<AppUserRecord, Short> CONTACTS_EXCHANGED = createField("contacts_exchanged", org.jooq.impl.SQLDataType.SMALLINT, this, "");
 
     /**
-     * The column <code>public.app_user.favorite</code>.
+     * The column <code>public.app_user.favourite</code>.
      */
-    public final TableField<AppUserRecord, Boolean> FAVORITE = createField("favorite", org.jooq.impl.SQLDataType.BOOLEAN, this, "");
+    public final TableField<AppUserRecord, Boolean> FAVOURITE = createField("favourite", org.jooq.impl.SQLDataType.BOOLEAN, this, "");
 
     /**
      * The column <code>public.app_user.religion</code>.
