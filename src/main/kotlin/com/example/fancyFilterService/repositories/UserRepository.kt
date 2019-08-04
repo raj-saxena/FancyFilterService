@@ -52,17 +52,26 @@ class UserRepository(val jooq: DSLContext) {
     ).where(addFilterConditions(filterUserRequest))
         .map { toUser(it) }
 
-    private fun addFilterConditions(filterUserRequest: FilterUserRequest) = DSL.trueCondition()
-        .and(addHasPhotoCondition(filterUserRequest))
-        .and(addInContactCondition(filterUserRequest))
-        .and(addFavoriteCondition(filterUserRequest))
+    private fun addFilterConditions(filterUserRequest: FilterUserRequest) = with(filterUserRequest) {
+        DSL.trueCondition()
+            .and(addHasPhotoCondition(filterUserRequest))
+            .and(addInContactCondition(filterUserRequest))
+            .and(addFavoriteCondition(filterUserRequest))
+            .and(addCompatibilityScoreCondition(filterUserRequest))
+    }
 
-    private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.favourite?.let {
-        when (it) {
-            true -> APP_USER.FAVOURITE.isTrue
-            false -> APP_USER.FAVOURITE.isFalse
-        }
-    } ?: DSL.trueCondition()
+    private fun addCompatibilityScoreCondition(filterUserRequest: FilterUserRequest) =
+        filterUserRequest.compatibilityScore?.let {
+            APP_USER.COMPATIBILITY_SCORE.greaterOrEqual(it.toBigDecimal())
+        } ?: DSL.trueCondition()
+
+    private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) =
+        filterUserRequest.favourite?.let {
+            when (it) {
+                true -> APP_USER.FAVOURITE.isTrue
+                false -> APP_USER.FAVOURITE.isFalse
+            }
+        } ?: DSL.trueCondition()
 
     private fun addInContactCondition(filterUserRequest: FilterUserRequest) =
         filterUserRequest.inContact?.let {

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import kotlin.random.Random
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -99,6 +100,19 @@ class UserRepositoryIntegrationTest {
 
             val nonFavoriteUsers = userRepository.getUsersFilterBy(FilterUserRequest(favourite = false))
             assertThat(nonFavoriteUsers).containsOnly(notAFavoriteUser)
+        }
+
+        @Test
+        fun `should return users having compatibilityScore equal to or greater than`() {
+            val threshold = Random.nextInt(1, 99).toFloat()
+            val userAboveThreshold = UserTestBuilder(seed = 1, compatibilityScore = threshold.plus(1)).build()
+            val userEqualThreshold = UserTestBuilder(seed = 2, compatibilityScore = threshold).build()
+            val userBelowThreshold = UserTestBuilder(seed = 3, compatibilityScore = threshold.minus(1)).build()
+            userRepository.save(listOf(userAboveThreshold, userEqualThreshold, userBelowThreshold))
+
+            val actual = userRepository.getUsersFilterBy(FilterUserRequest(compatibilityScore = threshold))
+
+            assertThat(actual).containsOnly(userEqualThreshold, userAboveThreshold)
         }
     }
 }

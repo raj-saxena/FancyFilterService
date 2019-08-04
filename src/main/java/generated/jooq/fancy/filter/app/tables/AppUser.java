@@ -4,18 +4,10 @@
 package jooq.fancy.filter.app.tables;
 
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Generated;
-
 import jooq.fancy.filter.app.Indexes;
 import jooq.fancy.filter.app.Keys;
 import jooq.fancy.filter.app.Public;
 import jooq.fancy.filter.app.tables.records.AppUserRecord;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Index;
@@ -27,6 +19,12 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -42,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AppUser extends TableImpl<AppUserRecord> {
 
-    private static final long serialVersionUID = 1108896857;
+    private static final long serialVersionUID = -1919860934;
 
     /**
      * The reference instance of <code>public.app_user</code>
@@ -95,7 +93,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
     /**
      * The column <code>public.app_user.compatibility_score</code>.
      */
-    public final TableField<AppUserRecord, BigDecimal> COMPATIBILITY_SCORE = createField("compatibility_score", org.jooq.impl.SQLDataType.NUMERIC(4, 3), this, "");
+    public final TableField<AppUserRecord, BigDecimal> COMPATIBILITY_SCORE = createField("compatibility_score", org.jooq.impl.SQLDataType.NUMERIC(4, 2), this, "");
 
     /**
      * The column <code>public.app_user.contacts_exchanged</code>.
