@@ -7,6 +7,7 @@ import com.example.fancyFilterService.services.UserService
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,27 +41,44 @@ class UserControllerIntegrationTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    @Test
-    fun `should filter by hasPhoto`() {
-        val expected = Users(listOf(UserTestBuilder(mainPhoto = null).build()))
-        val filterUserRequest = FilterUserRequest(false)
-        given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+    @Nested
+    inner class FilterTest {
+        private val userFilterUrl = "/api/users/filter"
 
-        val actual = restTemplate.postForObject<Users>("/api/users/filter", HttpEntity(filterUserRequest))
+        @Test
+        fun `should filter by hasPhoto`() {
+            val expected = Users(listOf(UserTestBuilder(mainPhoto = null).build()))
+            val filterUserRequest = FilterUserRequest(false, favorite = null)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
-        verify(userService).getUsersFilterBy(filterUserRequest)
-        assertThat(actual).isEqualTo(expected)
-    }
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
 
-    @Test
-    fun `should filter by inContact`() {
-        val expected = Users(listOf(UserTestBuilder(contactsExchanged = 3).build()))
-        val filterUserRequest = FilterUserRequest(inContact = true)
-        given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(expected)
+        }
 
-        val actual = restTemplate.postForObject<Users>("/api/users/filter", HttpEntity(filterUserRequest))
+        @Test
+        fun `should filter by inContact`() {
+            val expected = Users(listOf(UserTestBuilder(contactsExchanged = 3).build()))
+            val filterUserRequest = FilterUserRequest(inContact = true, favorite = null)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
-        verify(userService).getUsersFilterBy(filterUserRequest)
-        assertThat(actual).isEqualTo(expected)
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(expected)
+        }
+
+        @Test
+        fun `should filter by favorite`() {
+            val expected = Users(listOf(UserTestBuilder(favourite = true).build()))
+            val filterUserRequest = FilterUserRequest(favorite = true)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(expected)
+        }
     }
 }
