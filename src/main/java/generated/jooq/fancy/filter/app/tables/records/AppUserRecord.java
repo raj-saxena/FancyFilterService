@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements Record11<UUID, String, Short, String, Short, UUID, String, BigDecimal, Short, Boolean, String> {
 
-    private static final long serialVersionUID = -1741889893;
+    private static final long serialVersionUID = -87090873;
 
     /**
      * Setter for <code>public.app_user.id</code>.
@@ -169,17 +169,17 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
     }
 
     /**
-     * Setter for <code>public.app_user.favorite</code>.
+     * Setter for <code>public.app_user.favourite</code>.
      */
-    public AppUserRecord setFavorite(Boolean value) {
+    public AppUserRecord setFavourite(Boolean value) {
         set(9, value);
         return this;
     }
 
     /**
-     * Getter for <code>public.app_user.favorite</code>.
+     * Getter for <code>public.app_user.favourite</code>.
      */
-    public Boolean getFavorite() {
+    public Boolean getFavourite() {
         return (Boolean) get(9);
     }
 
@@ -307,7 +307,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
      */
     @Override
     public Field<Boolean> field10() {
-        return AppUser.APP_USER.FAVORITE;
+        return AppUser.APP_USER.FAVOURITE;
     }
 
     /**
@@ -395,7 +395,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
      */
     @Override
     public Boolean component10() {
-        return getFavorite();
+        return getFavourite();
     }
 
     /**
@@ -483,7 +483,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
      */
     @Override
     public Boolean value10() {
-        return getFavorite();
+        return getFavourite();
     }
 
     /**
@@ -580,7 +580,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
      */
     @Override
     public AppUserRecord value10(Boolean value) {
-        setFavorite(value);
+        setFavourite(value);
         return this;
     }
 
@@ -626,7 +626,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
     /**
      * Create a detached, initialised AppUserRecord
      */
-    public AppUserRecord(UUID id, String displayName, Short age, String jobTitle, Short heightInCm, UUID cityId, String mainPhoto, BigDecimal compatibilityScore, Short contactsExchanged, Boolean favorite, String religion) {
+    public AppUserRecord(UUID id, String displayName, Short age, String jobTitle, Short heightInCm, UUID cityId, String mainPhoto, BigDecimal compatibilityScore, Short contactsExchanged, Boolean favourite, String religion) {
         super(AppUser.APP_USER);
 
         set(0, id);
@@ -638,7 +638,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> implements
         set(6, mainPhoto);
         set(7, compatibilityScore);
         set(8, contactsExchanged);
-        set(9, favorite);
+        set(9, favourite);
         set(10, religion);
     }
 }

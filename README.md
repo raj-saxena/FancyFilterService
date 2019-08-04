@@ -28,3 +28,8 @@ docker-compose -f src/main/resources/docker-compose.yml up
 ```bash
 curl localhost:8080/actuator/health
 ```
+
+* Clean, migrate, generate-tables, build, test and start 
+```bash
+./gradlew clean flywM generateFancyFilterAppJooqSchemaSource build bootR
+```
