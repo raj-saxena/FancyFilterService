@@ -23,3 +23,8 @@ docker-compose -f src/main/resources/docker-compose.yml up
 ```bash
 ./gradlew bootRun
 ```
+
+* Verify that the app is running
+```bash
+curl localhost:8080/actuator/health
+```

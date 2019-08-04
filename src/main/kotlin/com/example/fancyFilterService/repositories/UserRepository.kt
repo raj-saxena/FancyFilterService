@@ -7,7 +7,6 @@ import com.example.fancyFilterService.latitude
 import com.example.fancyFilterService.longitude
 import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
-import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.impl.DSL
@@ -22,14 +21,14 @@ class UserRepository(val jooq: DSLContext) {
 
     fun save(users: List<User>) {
         users.forEach {
-            val cityId = UUID.randomUUID()
+            val cityId = it.city.id ?: UUID.randomUUID()
             jooq.newRecord(CITY).apply {
                 id = cityId
                 cityName = it.city.name
                 coordinates = PGpoint(it.city.longitude, it.city.latitude)
             }.insert()
             jooq.newRecord(APP_USER).apply {
-                id = UUID.randomUUID()
+                id = it.id ?: UUID.randomUUID()
                 displayName = it.displayName
                 age = it.age.toShort()
                 jobTitle = it.jobTitle
@@ -50,26 +49,36 @@ class UserRepository(val jooq: DSLContext) {
 
     fun getUsersFilterBy(filterUserRequest: FilterUserRequest): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
-    ).where(addFilterCondition(filterUserRequest))
+    ).where(addFilterConditions(filterUserRequest))
         .map { toUser(it) }
 
-    private fun addFilterCondition(filterUserRequest: FilterUserRequest): Condition {
-        return DSL.trueCondition()?.let {
-            it.and(filterUserRequest.hasPhoto?.let { inner ->
-                when (inner) {
-                    true -> APP_USER.MAIN_PHOTO.isNotNull
-                    false -> APP_USER.MAIN_PHOTO.isNull
-                }
-            } ?: DSL.trueCondition())
-        }?.let {
-            it.and(filterUserRequest.inContact?.let { inner ->
-                when (inner) {
-                    true -> APP_USER.CONTACTS_EXCHANGED.greaterThan(0)
-                    false -> APP_USER.CONTACTS_EXCHANGED.equal(0)
-                }
-            } ?: DSL.trueCondition())
-        }!!
-    }
+    private fun addFilterConditions(filterUserRequest: FilterUserRequest) = DSL.trueCondition()
+        .and(addHasPhotoCondition(filterUserRequest))
+        .and(addInContactCondition(filterUserRequest))
+        .and(addFavoriteCondition(filterUserRequest))
+
+    private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.favorite?.let {
+        when (it) {
+            true -> APP_USER.FAVORITE.isTrue
+            false -> APP_USER.FAVORITE.isFalse
+        }
+    } ?: DSL.trueCondition()
+
+    private fun addInContactCondition(filterUserRequest: FilterUserRequest) =
+        filterUserRequest.inContact?.let {
+            when (it) {
+                true -> APP_USER.CONTACTS_EXCHANGED.greaterThan(0)
+                false -> APP_USER.CONTACTS_EXCHANGED.equal(0)
+            }
+        } ?: DSL.trueCondition()
+
+    private fun addHasPhotoCondition(filterUserRequest: FilterUserRequest) =
+        filterUserRequest.hasPhoto?.let {
+            when (it) {
+                true -> APP_USER.MAIN_PHOTO.isNotNull
+                false -> APP_USER.MAIN_PHOTO.isNull
+            }
+        } ?: DSL.trueCondition()
 
     private fun toUser(it: Record): User = User(
         it.get(APP_USER.ID),
