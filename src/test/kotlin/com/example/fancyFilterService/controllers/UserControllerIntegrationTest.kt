@@ -19,6 +19,7 @@ import org.springframework.boot.test.web.client.postForObject
 import org.springframework.http.HttpEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import kotlin.random.Random
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,7 +49,7 @@ class UserControllerIntegrationTest {
         @Test
         fun `should filter by hasPhoto`() {
             val expected = Users(listOf(UserTestBuilder(mainPhoto = null).build()))
-            val filterUserRequest = FilterUserRequest(false, favourite = null)
+            val filterUserRequest = FilterUserRequest(false)
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
@@ -60,7 +61,7 @@ class UserControllerIntegrationTest {
         @Test
         fun `should filter by inContact`() {
             val expected = Users(listOf(UserTestBuilder(contactsExchanged = 3).build()))
-            val filterUserRequest = FilterUserRequest(inContact = true, favourite = null)
+            val filterUserRequest = FilterUserRequest(inContact = true)
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
@@ -79,6 +80,20 @@ class UserControllerIntegrationTest {
 
             verify(userService).getUsersFilterBy(filterUserRequest)
             assertThat(actual).isEqualTo(expected)
+        }
+
+        @Test
+        fun `should filter by compatibilityScore greater than`() {
+            val threshold = Random.nextInt(1, 99).toFloat()
+            val usersAboveThreshold =
+                Users(listOf(UserTestBuilder(compatibilityScore = threshold.plus(1)).build()))
+            val filterUserRequest = FilterUserRequest(compatibilityScore = threshold)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersAboveThreshold)
+
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(usersAboveThreshold)
         }
     }
 }

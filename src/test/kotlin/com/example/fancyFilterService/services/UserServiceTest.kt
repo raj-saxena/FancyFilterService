@@ -54,7 +54,9 @@ class UserServiceTest {
 
     @Test
     fun `should get users filter by request`() {
-        val filterUserRequest = FilterUserRequest(hasPhoto = false, favourite = null)
+        val filterUserRequest = FilterUserRequest(
+            hasPhoto = false
+        )
         val expected = listOf(UserTestBuilder().build())
         given(userRepository.getUsersFilterBy(filterUserRequest)).willReturn(expected)
 
