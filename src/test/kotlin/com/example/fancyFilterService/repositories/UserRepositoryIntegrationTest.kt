@@ -127,5 +127,18 @@ class UserRepositoryIntegrationTest {
 
             assertThat(actual).containsOnly(userEqualAge, userBelowAge)
         }
+
+        @Test
+        fun `should return users with height more than and not equal to`() {
+            val height = Random.nextInt(135, 210)
+            val userAboveHeight = UserTestBuilder(seed = 1, heightInCm = height.plus(1)).build()
+            val userEqualHeight = UserTestBuilder(seed = 2, heightInCm = height).build()
+            val userBelowHeight = UserTestBuilder(seed = 3, heightInCm = height.minus(1)).build()
+            userRepository.save(listOf(userAboveHeight, userEqualHeight, userBelowHeight))
+
+            val actual = userRepository.getUsersFilterBy(FilterUserRequest(height = height))
+
+            assertThat(actual).containsOnly(userAboveHeight)
+        }
     }
 }
