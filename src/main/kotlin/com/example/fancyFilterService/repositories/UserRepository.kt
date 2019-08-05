@@ -52,13 +52,16 @@ class UserRepository(val jooq: DSLContext) {
     ).where(addFilterConditions(filterUserRequest))
         .map { toUser(it) }
 
-    private fun addFilterConditions(filterUserRequest: FilterUserRequest) = with(filterUserRequest) {
-        DSL.trueCondition()
-            .and(addHasPhotoCondition(filterUserRequest))
-            .and(addInContactCondition(filterUserRequest))
-            .and(addFavoriteCondition(filterUserRequest))
-            .and(addCompatibilityScoreCondition(filterUserRequest))
-    }
+    private fun addFilterConditions(filterUserRequest: FilterUserRequest) = DSL.trueCondition()
+        .and(addHasPhotoCondition(filterUserRequest))
+        .and(addInContactCondition(filterUserRequest))
+        .and(addFavoriteCondition(filterUserRequest))
+        .and(addCompatibilityScoreCondition(filterUserRequest))
+        .and(addMaxAgeCondition(filterUserRequest))
+
+    private fun addMaxAgeCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.age?.let {
+        APP_USER.AGE.lessOrEqual(it.toShort())
+    } ?: DSL.trueCondition()
 
     private fun addCompatibilityScoreCondition(filterUserRequest: FilterUserRequest) =
         filterUserRequest.compatibilityScore?.let {

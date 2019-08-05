@@ -114,5 +114,18 @@ class UserRepositoryIntegrationTest {
 
             assertThat(actual).containsOnly(userEqualThreshold, userAboveThreshold)
         }
+
+        @Test
+        fun `should return users with age less than or equal to`() {
+            val maxAge = Random.nextInt(18, 95)
+            val userAboveAge = UserTestBuilder(seed = 1, age = maxAge.plus(1)).build()
+            val userEqualAge = UserTestBuilder(seed = 2, age = maxAge).build()
+            val userBelowAge = UserTestBuilder(seed = 3, age = maxAge.minus(1)).build()
+            userRepository.save(listOf(userAboveAge, userEqualAge, userBelowAge))
+
+            val actual = userRepository.getUsersFilterBy(FilterUserRequest(age = maxAge))
+
+            assertThat(actual).containsOnly(userEqualAge, userBelowAge)
+        }
     }
 }

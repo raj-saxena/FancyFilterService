@@ -83,7 +83,7 @@ class UserControllerIntegrationTest {
         }
 
         @Test
-        fun `should filter by compatibilityScore greater than`() {
+        fun `should filter by compatibilityScore greater than or equal to`() {
             val threshold = Random.nextInt(1, 99).toFloat()
             val usersAboveThreshold =
                 Users(listOf(UserTestBuilder(compatibilityScore = threshold.plus(1)).build()))
@@ -94,6 +94,19 @@ class UserControllerIntegrationTest {
 
             verify(userService).getUsersFilterBy(filterUserRequest)
             assertThat(actual).isEqualTo(usersAboveThreshold)
+        }
+
+        @Test
+        fun `should filter by age less than or equal to`() {
+            val maxAge = Random.nextInt(18, 95)
+            val usersUnderMaxAge = Users(listOf(UserTestBuilder(age = maxAge.minus(1)).build()))
+            val filterUserRequest = FilterUserRequest(age = maxAge)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersUnderMaxAge)
+
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(usersUnderMaxAge)
         }
     }
 }
