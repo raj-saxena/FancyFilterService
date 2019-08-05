@@ -108,5 +108,18 @@ class UserControllerIntegrationTest {
             verify(userService).getUsersFilterBy(filterUserRequest)
             assertThat(actual).isEqualTo(usersUnderMaxAge)
         }
+
+        @Test
+        fun `should filter by height between 135 to 210 cm`() {
+            val minHeight = Random.nextInt(135, 210)
+            val usersAboveMinHeight = Users(listOf(UserTestBuilder(age = minHeight.plus(1)).build()))
+            val filterUserRequest = FilterUserRequest(height = minHeight)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersAboveMinHeight)
+
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(usersAboveMinHeight)
+        }
     }
 }

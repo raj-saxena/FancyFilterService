@@ -58,6 +58,11 @@ class UserRepository(val jooq: DSLContext) {
         .and(addFavoriteCondition(filterUserRequest))
         .and(addCompatibilityScoreCondition(filterUserRequest))
         .and(addMaxAgeCondition(filterUserRequest))
+        .and(addMinHeightCondition(filterUserRequest))
+
+    private fun addMinHeightCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.height?.let {
+        APP_USER.HEIGHT_IN_CM.greaterThan(it.toShort())
+    } ?: DSL.trueCondition()
 
     private fun addMaxAgeCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.age?.let {
         APP_USER.AGE.lessOrEqual(it.toShort())
