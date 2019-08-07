@@ -1,6 +1,8 @@
 package com.example.fancyFilterService.controllers
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.City
+import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
 import com.example.fancyFilterService.services.UserService
@@ -19,6 +21,7 @@ import org.springframework.boot.test.web.client.postForObject
 import org.springframework.http.HttpEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.util.UUID
 import kotlin.random.Random
 
 @ExtendWith(SpringExtension::class)
@@ -120,6 +123,25 @@ class UserControllerIntegrationTest {
 
             verify(userService).getUsersFilterBy(filterUserRequest)
             assertThat(actual).isEqualTo(usersAboveMinHeight)
+        }
+
+        @Test
+        fun `should filter by distance upto`() {
+            val distance = Random.nextInt(30, 300)
+            val expected = Users(listOf(UserTestBuilder(seed = 99).build()))
+            val filterUserRequest = FilterUserRequest(
+                distanceFilter = DistanceFilter(
+                    userId = UUID.randomUUID(),
+                    origin = City(name = "Foo", latitude = 1.0, longitude = 2.0),
+                    maxDistanceInKm = distance
+                )
+            )
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(expected)
+
+            val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
+
+            verify(userService).getUsersFilterBy(filterUserRequest)
+            assertThat(actual).isEqualTo(expected)
         }
     }
 }

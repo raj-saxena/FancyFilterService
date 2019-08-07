@@ -44,7 +44,7 @@ import org.postgresql.geometric.PGpoint;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class City extends TableImpl<CityRecord> {
 
-    private static final long serialVersionUID = 766872395;
+    private static final long serialVersionUID = -359461026;
 
     /**
      * The reference instance of <code>public.city</code>
@@ -120,7 +120,7 @@ public class City extends TableImpl<CityRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.CITY_PKEY);
+        return Arrays.<Index>asList(Indexes.CITY_PKEY, Indexes.IDX_CITY_NAME);
     }
 
     /**
