@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "3f691496-bf41-423c-a5d0-4f788e72bb91",
+		"name": "FancyFilterApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/actuator/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "75fd28f5-f613-49d2-ae73-1d2a2c73d891",
+						"exec": [
+							"pm.test(\"all users\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.users.length).to.eql(25);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filter users by",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f716ff58-3683-468c-9a4d-41efdbf4d64e",
+						"exec": [
+							"pm.test(\"all users with photo\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.users.length).to.eql(20);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"distance_filter\": {\n\t\t\"user_id\": \"fc128b44-9b64-4ce1-bea6-dfd4d7632dc0\",\n\t\t\"origin\": {\n\t\t\t\"name\": \"Leeds\", \n\t\t\t\"lat\": 53.801277, \n\t\t\t\"lon\": -1.548567\n\t\t},\n\t\t\"max_distance_in_km\": 200\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/filter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"filter"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

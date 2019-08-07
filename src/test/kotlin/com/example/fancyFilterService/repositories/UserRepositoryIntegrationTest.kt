@@ -1,6 +1,5 @@
 package com.example.fancyFilterService.repositories
 
-import com.example.fancyFilterService.UsersAssert
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.City
@@ -178,7 +177,7 @@ class UserRepositoryIntegrationTest {
                 )
             )
 
-            UsersAssert.assertThat(Users(actual)).isEqualTo(Users(listOf(userSharon)))
+            assertThat(Users(actual)).isEqualTo(Users(listOf(userSharon)))
         }
     }
 }
