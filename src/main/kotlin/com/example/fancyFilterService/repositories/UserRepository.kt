@@ -10,6 +10,7 @@ import jooq.fancy.filter.app.Tables.CITY
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.condition
 import org.postgresql.geometric.PGpoint
 import org.springframework.stereotype.Repository
 import java.util.UUID
@@ -21,12 +22,13 @@ class UserRepository(val jooq: DSLContext) {
 
     fun save(users: List<User>) {
         users.forEach {
-            val cityId = it.city.id ?: UUID.randomUUID()
-            jooq.newRecord(CITY).apply {
-                id = cityId
-                cityName = it.city.name
-                coordinates = PGpoint(it.city.longitude, it.city.latitude)
-            }.insert()
+            jooq.insertInto(CITY)
+                .set(CITY.ID, it.city.id ?: UUID.randomUUID())
+                .set(CITY.CITY_NAME, it.city.name)
+                .set(CITY.COORDINATES, PGpoint(it.city.longitude, it.city.latitude))
+                .onDuplicateKeyIgnore()
+                .execute()
+            val cityId = jooq.select(CITY.ID).from(CITY).where(CITY.CITY_NAME.eq(it.city.name)).fetchOne().value1()
             jooq.newRecord(APP_USER).apply {
                 id = it.id ?: UUID.randomUUID()
                 displayName = it.displayName
@@ -59,6 +61,18 @@ class UserRepository(val jooq: DSLContext) {
         .and(addCompatibilityScoreCondition(filterUserRequest))
         .and(addMaxAgeCondition(filterUserRequest))
         .and(addMinHeightCondition(filterUserRequest))
+        .and(addDistanceCondition(filterUserRequest))
+
+    private fun addDistanceCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.distanceFilter?.let {
+        APP_USER.ID.notEqual(it.userId) // Exclude self
+            .and(
+                condition(
+                    """round((ST_DistanceSpheroid(ST_SetSRID(geometry(${CITY.COORDINATES}), 4326),
+                                  ST_SetSRID(ST_MakePoint(${it.origin.longitude}, ${it.origin.latitude}), 4326),
+                                  'SPHEROID["WGS 84",6378137,298.257223563]') / 1000)::numeric, 2) < ${it.maxDistanceInKm}"""
+                )
+            )
+    } ?: DSL.trueCondition()
 
     private fun addMinHeightCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.height?.let {
         APP_USER.HEIGHT_IN_CM.greaterThan(it.toShort())

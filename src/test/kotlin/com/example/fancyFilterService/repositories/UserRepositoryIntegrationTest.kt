@@ -1,7 +1,10 @@
 package com.example.fancyFilterService.repositories
 
+import com.example.fancyFilterService.UsersAssert
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.City
+import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
 import jooq.fancy.filter.app.Tables.APP_USER
@@ -139,6 +142,43 @@ class UserRepositoryIntegrationTest {
             val actual = userRepository.getUsersFilterBy(FilterUserRequest(height = height))
 
             assertThat(actual).containsOnly(userAboveHeight)
+        }
+
+        @Test
+        fun `should return users with distance upto input`() {
+            // Calculated distance using https://gps-coordinates.org/distance-between-coordinates.php
+            val distance = 200
+            // current user
+            val userCaroline = UserTestBuilder(
+                displayName = "Caroline",
+                seed = 1,
+                city = City(name = "Leeds", latitude = 53.801277, longitude = -1.548567)
+            ).build()
+            // Sharon's distance from Caroline - 155.15 KM
+            val userSharon = UserTestBuilder(
+                displayName = "Sharon",
+                seed = 2,
+                city = City(name = "Solihull", latitude = 52.412811, longitude = -1.778197)
+            ).build()
+            // Natalia's distance from Caroline - 280.40
+            val userNatalia = UserTestBuilder(
+                displayName = "Natalia",
+                seed = 3,
+                city = City(name = "Cardiff", latitude = 51.481583, longitude = -3.179090)
+            ).build()
+            userRepository.save(listOf(userCaroline, userSharon, userNatalia))
+
+            val actual = userRepository.getUsersFilterBy(
+                FilterUserRequest(
+                    distanceFilter = DistanceFilter(
+                        userId = userCaroline.id!!,
+                        origin = userCaroline.city,
+                        maxDistanceInKm = distance
+                    )
+                )
+            )
+
+            UsersAssert.assertThat(Users(actual)).isEqualTo(Users(listOf(userSharon)))
         }
     }
 }

@@ -35,6 +35,7 @@ public class Indexes {
 
     public static final Index APP_USER_PKEY = Indexes0.APP_USER_PKEY;
     public static final Index CITY_PKEY = Indexes0.CITY_PKEY;
+    public static final Index IDX_CITY_NAME = Indexes0.IDX_CITY_NAME;
     public static final Index FLYWAY_SCHEMA_HISTORY_PK = Indexes0.FLYWAY_SCHEMA_HISTORY_PK;
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Indexes0.FLYWAY_SCHEMA_HISTORY_S_IDX;
     public static final Index SPATIAL_REF_SYS_PKEY = Indexes0.SPATIAL_REF_SYS_PKEY;
@@ -46,6 +47,7 @@ public class Indexes {
     private static class Indexes0 {
         public static Index APP_USER_PKEY = Internal.createIndex("app_user_pkey", AppUser.APP_USER, new OrderField[] { AppUser.APP_USER.ID }, true);
         public static Index CITY_PKEY = Internal.createIndex("city_pkey", City.CITY, new OrderField[] { City.CITY.ID }, true);
+        public static Index IDX_CITY_NAME = Internal.createIndex("idx_city_name", City.CITY, new OrderField[] { City.CITY.CITY_NAME }, true);
         public static Index FLYWAY_SCHEMA_HISTORY_PK = Internal.createIndex("flyway_schema_history_pk", FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK }, true);
         public static Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex("flyway_schema_history_s_idx", FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
         public static Index SPATIAL_REF_SYS_PKEY = Internal.createIndex("spatial_ref_sys_pkey", SpatialRefSys.SPATIAL_REF_SYS, new OrderField[] { SpatialRefSys.SPATIAL_REF_SYS.SRID }, true);
