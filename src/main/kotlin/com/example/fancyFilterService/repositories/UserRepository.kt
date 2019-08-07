@@ -12,11 +12,13 @@ import org.jooq.Record
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.condition
 import org.postgresql.geometric.PGpoint
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
 class UserRepository(val jooq: DSLContext) {
+    val logger = LoggerFactory.getLogger(UserRepository::class.java)
 
     fun getUserCount() = jooq.fetchCount(APP_USER)
 
@@ -52,6 +54,7 @@ class UserRepository(val jooq: DSLContext) {
     fun getUsersFilterBy(filterUserRequest: FilterUserRequest): List<User> = jooq.selectFrom(
         APP_USER.join(CITY).on(APP_USER.CITY_ID.eq(CITY.ID))
     ).where(addFilterConditions(filterUserRequest))
+        .also { logger.debug("query=[${it.sql}]") }
         .map { toUser(it) }
 
     private fun addFilterConditions(filterUserRequest: FilterUserRequest) = DSL.trueCondition()
