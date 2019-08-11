@@ -42,3 +42,6 @@ curl localhost:8080/actuator/health
 ```bash
 ./gradlew clean flywM generateFancyFilterAppJooqSchemaSource build bootR
 ```
+
+#### Postman collection for the service
+[Postman](./postman)
