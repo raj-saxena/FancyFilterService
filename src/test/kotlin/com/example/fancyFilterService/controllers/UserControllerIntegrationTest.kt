@@ -1,6 +1,7 @@
 package com.example.fancyFilterService.controllers
 
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.Age
 import com.example.fancyFilterService.dtos.City
 import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
@@ -103,10 +104,11 @@ class UserControllerIntegrationTest {
         }
 
         @Test
-        fun `should filter by age less than or equal to`() {
-            val maxAge = Random.nextInt(18, 95)
-            val usersUnderMaxAge = Users(listOf(UserTestBuilder(age = maxAge.minus(1)).build()))
-            val filterUserRequest = FilterUserRequest(age = maxAge)
+        fun `should filter by age between`() {
+            val min = Random.nextInt(18, 50)
+            val max = Random.nextInt(50, 95)
+            val usersUnderMaxAge = Users(listOf(UserTestBuilder(age = (max + min) / 2).build()))
+            val filterUserRequest = FilterUserRequest(age = Age(min, max))
             given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersUnderMaxAge)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))

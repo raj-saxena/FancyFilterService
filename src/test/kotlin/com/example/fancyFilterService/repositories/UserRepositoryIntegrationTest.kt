@@ -2,6 +2,7 @@ package com.example.fancyFilterService.repositories
 
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
+import com.example.fancyFilterService.dtos.Age
 import com.example.fancyFilterService.dtos.City
 import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
@@ -122,15 +123,16 @@ class UserRepositoryIntegrationTest {
 
         @Test
         fun `should return users with age less than or equal to`() {
-            val maxAge = Random.nextInt(18, 95)
-            val userAboveAge = UserTestBuilder(seed = 1, age = maxAge.plus(1)).build()
-            val userEqualAge = UserTestBuilder(seed = 2, age = maxAge).build()
-            val userBelowAge = UserTestBuilder(seed = 3, age = maxAge.minus(1)).build()
-            userRepository.save(listOf(userAboveAge, userEqualAge, userBelowAge))
+            val min = Random.nextInt(18, 50)
+            val max = Random.nextInt(50, 95)
+            val userAboveRange = UserTestBuilder(seed = 1, age = max.plus(1)).build()
+            val userInRange = UserTestBuilder(seed = 2, age = 50).build()
+            val userBelowRange = UserTestBuilder(seed = 3, age = min.minus(1)).build()
+            userRepository.save(listOf(userAboveRange, userInRange, userBelowRange))
 
-            val actual = userRepository.getUsersFilterBy(FilterUserRequest(age = maxAge))
+            val actual = userRepository.getUsersFilterBy(FilterUserRequest(age = Age(min, max)))
 
-            assertThat(actual).containsOnly(userEqualAge, userBelowAge)
+            assertThat(actual).containsOnly(userInRange)
         }
 
         @Test

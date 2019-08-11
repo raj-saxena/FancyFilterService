@@ -82,7 +82,7 @@ class UserRepository(val jooq: DSLContext) {
     } ?: DSL.trueCondition()
 
     private fun addMaxAgeCondition(filterUserRequest: FilterUserRequest) = filterUserRequest.age?.let {
-        APP_USER.AGE.lessOrEqual(it.toShort())
+        APP_USER.AGE.between(it.min.toShort(), it.max.toShort())
     } ?: DSL.trueCondition()
 
     private fun addCompatibilityScoreCondition(filterUserRequest: FilterUserRequest) =

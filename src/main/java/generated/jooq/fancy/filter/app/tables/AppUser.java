@@ -4,10 +4,18 @@
 package jooq.fancy.filter.app.tables;
 
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Generated;
+
 import jooq.fancy.filter.app.Indexes;
 import jooq.fancy.filter.app.Keys;
 import jooq.fancy.filter.app.Public;
 import jooq.fancy.filter.app.tables.records.AppUserRecord;
+
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Index;
@@ -19,12 +27,6 @@ import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
-
-import javax.annotation.Generated;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 
 /**
