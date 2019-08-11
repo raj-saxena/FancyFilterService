@@ -10,15 +10,94 @@
 			"item": [
 				{
 					"name": "By compatibility score",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "41d0962b-c66f-46c0-9c4f-e83ac377d3ec",
+								"exec": [
+									"pm.test(\"all users with compatibility score between 50 to 80\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.users.length).to.eql(4);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n\t\"compatibility_score\": {\n\t\t\"min\": 0.5,\n\t\t\"max\": 0.8\n\t}\n}"
 						},
 						"url": {
-							"raw": ""
+							"raw": "http://localhost:8080/api/users/filter",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "By age",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "57315f3e-e25f-49ce-9768-1d3c0c9ae38e",
+								"exec": [
+									"pm.test(\"all users with age between 25 to 30\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.users.length).to.eql(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"age\": {\n\t\t\"min\": 25,\n\t\t\"max\": 35\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users/filter",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"filter"
+							]
 						}
 					},
 					"response": []
