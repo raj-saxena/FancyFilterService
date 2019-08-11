@@ -2,6 +2,7 @@ package com.example.fancyFilterService.controllers
 
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.City
+import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
@@ -86,17 +87,19 @@ class UserControllerIntegrationTest {
         }
 
         @Test
-        fun `should filter by compatibilityScore greater than or equal to`() {
-            val threshold = Random.nextInt(1, 99).toFloat()
-            val usersAboveThreshold =
-                Users(listOf(UserTestBuilder(compatibilityScore = threshold.plus(1)).build()))
-            val filterUserRequest = FilterUserRequest(compatibilityScore = threshold)
-            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersAboveThreshold)
+        fun `should filter by compatibilityScore between`() {
+            val min = 0.50f
+            val max = 0.75f
+            val usersInRange =
+                Users(listOf(UserTestBuilder(compatibilityScore = (min + max) / 2).build()))
+            val compatibilityScore = CompatibilityScore(min, max)
+            val filterUserRequest = FilterUserRequest(compatibilityScore = compatibilityScore)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersInRange)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
 
             verify(userService).getUsersFilterBy(filterUserRequest)
-            assertThat(actual).isEqualTo(usersAboveThreshold)
+            assertThat(actual).isEqualTo(usersInRange)
         }
 
         @Test

@@ -87,7 +87,7 @@ class UserRepository(val jooq: DSLContext) {
 
     private fun addCompatibilityScoreCondition(filterUserRequest: FilterUserRequest) =
         filterUserRequest.compatibilityScore?.let {
-            APP_USER.COMPATIBILITY_SCORE.greaterOrEqual(it.toBigDecimal())
+            APP_USER.COMPATIBILITY_SCORE.between(it.min.toBigDecimal(), it.max.toBigDecimal())
         } ?: DSL.trueCondition()
 
     private fun addFavoriteCondition(filterUserRequest: FilterUserRequest) =
