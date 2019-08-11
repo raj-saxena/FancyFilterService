@@ -6,6 +6,26 @@
 	},
 	"item": [
 		{
+			"name": "FilterBy",
+			"item": [
+				{
+					"name": "By compatibility score",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Health check",
 			"request": {
 				"method": "GET",
