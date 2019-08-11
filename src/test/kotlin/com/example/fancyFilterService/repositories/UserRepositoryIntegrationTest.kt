@@ -3,6 +3,7 @@ package com.example.fancyFilterService.repositories
 import com.example.fancyFilterService.UsersAssert.Companion.assertThat
 import com.example.fancyFilterService.builders.UserTestBuilder
 import com.example.fancyFilterService.dtos.City
+import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
 import com.example.fancyFilterService.dtos.Users
@@ -105,16 +106,18 @@ class UserRepositoryIntegrationTest {
         }
 
         @Test
-        fun `should return users having compatibilityScore equal to or greater than`() {
-            val threshold = Random.nextInt(1, 99).toFloat()
-            val userAboveThreshold = UserTestBuilder(seed = 1, compatibilityScore = threshold.plus(1)).build()
-            val userEqualThreshold = UserTestBuilder(seed = 2, compatibilityScore = threshold).build()
-            val userBelowThreshold = UserTestBuilder(seed = 3, compatibilityScore = threshold.minus(1)).build()
-            userRepository.save(listOf(userAboveThreshold, userEqualThreshold, userBelowThreshold))
+        fun `should return users having compatibilityScore between`() {
+            val min = 0.50f
+            val max = 0.80f
+            val userUnderRange = UserTestBuilder(seed = 1, compatibilityScore = min.minus(0.1f)).build()
+            val userInRange = UserTestBuilder(seed = 2, compatibilityScore = (min + max) / 2).build()
+            val userAboveRange = UserTestBuilder(seed = 3, compatibilityScore = max.plus(0.1f)).build()
+            userRepository.save(listOf(userUnderRange, userInRange, userAboveRange))
 
-            val actual = userRepository.getUsersFilterBy(FilterUserRequest(compatibilityScore = threshold))
+            val actual =
+                userRepository.getUsersFilterBy(FilterUserRequest(compatibilityScore = CompatibilityScore(min, max)))
 
-            assertThat(actual).containsOnly(userEqualThreshold, userAboveThreshold)
+            assertThat(actual).containsOnly(userInRange)
         }
 
         @Test

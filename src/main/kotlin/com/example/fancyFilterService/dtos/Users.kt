@@ -13,7 +13,7 @@ data class User(
     @JsonProperty("height_in_cm") val heightInCm: Int,
     val city: City,
     @JsonProperty("main_photo") val mainPhoto: String?,
-    @JsonProperty("compatibility_score") val compatibilityScore: Float,
+    val compatibilityScore: Float,
     @JsonProperty("contacts_exchanged") val contactsExchanged: Int,
     val favourite: Boolean,
     val religion: String
