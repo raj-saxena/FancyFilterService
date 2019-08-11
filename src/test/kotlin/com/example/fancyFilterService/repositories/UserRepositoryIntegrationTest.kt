@@ -7,6 +7,7 @@ import com.example.fancyFilterService.dtos.City
 import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
+import com.example.fancyFilterService.dtos.Height
 import com.example.fancyFilterService.dtos.Users
 import jooq.fancy.filter.app.Tables.APP_USER
 import jooq.fancy.filter.app.Tables.CITY
@@ -137,15 +138,16 @@ class UserRepositoryIntegrationTest {
 
         @Test
         fun `should return users with height more than and not equal to`() {
-            val height = Random.nextInt(135, 210)
-            val userAboveHeight = UserTestBuilder(seed = 1, heightInCm = height.plus(1)).build()
-            val userEqualHeight = UserTestBuilder(seed = 2, heightInCm = height).build()
-            val userBelowHeight = UserTestBuilder(seed = 3, heightInCm = height.minus(1)).build()
-            userRepository.save(listOf(userAboveHeight, userEqualHeight, userBelowHeight))
+            val min = Random.nextInt(135, 180)
+            val max = Random.nextInt(180, 210)
+            val userAboveHeight = UserTestBuilder(seed = 1, heightInCm = max.plus(1)).build()
+            val userInRange = UserTestBuilder(seed = 2, heightInCm = 180).build()
+            val userBelowHeight = UserTestBuilder(seed = 3, heightInCm = min.minus(1)).build()
+            userRepository.save(listOf(userAboveHeight, userInRange, userBelowHeight))
 
-            val actual = userRepository.getUsersFilterBy(FilterUserRequest(height = height))
+            val actual = userRepository.getUsersFilterBy(FilterUserRequest(height = Height(min, max)))
 
-            assertThat(actual).containsOnly(userAboveHeight)
+            assertThat(actual).containsOnly(userInRange)
         }
 
         @Test

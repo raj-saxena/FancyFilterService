@@ -6,6 +6,7 @@ import com.example.fancyFilterService.dtos.City
 import com.example.fancyFilterService.dtos.CompatibilityScore
 import com.example.fancyFilterService.dtos.DistanceFilter
 import com.example.fancyFilterService.dtos.FilterUserRequest
+import com.example.fancyFilterService.dtos.Height
 import com.example.fancyFilterService.dtos.Users
 import com.example.fancyFilterService.services.UserService
 import com.nhaarman.mockitokotlin2.given
@@ -107,27 +108,28 @@ class UserControllerIntegrationTest {
         fun `should filter by age between`() {
             val min = Random.nextInt(18, 50)
             val max = Random.nextInt(50, 95)
-            val usersUnderMaxAge = Users(listOf(UserTestBuilder(age = (max + min) / 2).build()))
+            val usersInRange = Users(listOf(UserTestBuilder(age = (max + min) / 2).build()))
             val filterUserRequest = FilterUserRequest(age = Age(min, max))
-            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersUnderMaxAge)
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersInRange)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
 
             verify(userService).getUsersFilterBy(filterUserRequest)
-            assertThat(actual).isEqualTo(usersUnderMaxAge)
+            assertThat(actual).isEqualTo(usersInRange)
         }
 
         @Test
         fun `should filter by height between 135 to 210 cm`() {
-            val minHeight = Random.nextInt(135, 210)
-            val usersAboveMinHeight = Users(listOf(UserTestBuilder(age = minHeight.plus(1)).build()))
-            val filterUserRequest = FilterUserRequest(height = minHeight)
-            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersAboveMinHeight)
+            val min = Random.nextInt(135, 180)
+            val max = Random.nextInt(180, 210)
+            val usersInRange = Users(listOf(UserTestBuilder(age = (min + max) / 2).build()))
+            val filterUserRequest = FilterUserRequest(height = Height(min, max))
+            given(userService.getUsersFilterBy(filterUserRequest)).willReturn(usersInRange)
 
             val actual = restTemplate.postForObject<Users>(userFilterUrl, HttpEntity(filterUserRequest))
 
             verify(userService).getUsersFilterBy(filterUserRequest)
-            assertThat(actual).isEqualTo(usersAboveMinHeight)
+            assertThat(actual).isEqualTo(usersInRange)
         }
 
         @Test
